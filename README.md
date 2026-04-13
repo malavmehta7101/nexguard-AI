@@ -13,7 +13,7 @@
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactjs.org)
-[![Claude AI](https://img.shields.io/badge/Powered%20by-Claude%20AI-FF6B35?style=flat-square)](https://anthropic.com)
+[![Claude AI](https://img.shields.io/badge/Powered%20by-%20AI-FF6B35?style=flat-square)](https://anthropic.com)
 [![License](https://img.shields.io/badge/License-MIT-00e87a?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 
