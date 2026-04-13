@@ -133,7 +133,7 @@ nexguard-ai/
     │   ├── components/
     │   │   ├── MatrixRain.jsx      # Animated matrix background
     │   │   └── ThreatTicker.jsx    # Live threat scroll ticker
-            └── DashboardLegalDisclaimer.jsx  # LEGAL DISCLAIMER
+            └── LegalDisclaimer.jsx # LEGAL DISCLAIMER
     │   ├── tools/                  # All 12 security tool components
     │   │   ├── Overview.jsx
     │   │   ├── AIChat.jsx
