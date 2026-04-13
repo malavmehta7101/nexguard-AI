@@ -29,26 +29,8 @@
 
 > Dashboard Overview · AI Chat · Phishing Detection · Threat Intel Feed
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  NEXGUARD AI  │  nexguard › Overview          ● AI ONLINE · FREE│
-├───────────────┼─────────────────────────────────────────────────┤
-│  DASHBOARD    │  Security Operations Center                      │
-│  > Overview   │                                                   │
-│               │  ┌──────────┐ ┌──────────┐ ┌──────────┐        │
-│  AI TOOLS     │  │ 284,539  │ │ 247,891  │ │  12,543  │        │
-│  > AI Chat    │  │ Threats  │ │   CVEs   │ │  Scans   │        │
-│  > Phishing   │  └──────────┘ └──────────┘ └──────────┘        │
-│  > Deepfake   │                                                   │
-│  > Email      │  Recent Alerts        Attack Vectors             │
-│  > Malware    │  ● CVE-2024-3094 ▸    Phishing      74% ████    │
-│  > Pen Test   │  ● Phishing domain ▸  Malware       68% ███     │
-│               │  ● SSH brute force ▸  Brute Force   61% ███     │
-│  SEC TOOLS    │                                                   │
-│  > WebRTC     │  Quick Access: [Phishing] [AI Chat] [Email]      │
-│  > Password   └─────────────────────────────────────────────────┘
-│  > CVE Intel
-│  > Threat Feed
-└───────────────
+Dashboard
+<img src="docs/dashboard.png" width="700">
 ```
 ---
 
