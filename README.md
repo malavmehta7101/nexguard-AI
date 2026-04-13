@@ -29,7 +29,7 @@
 
 > Dashboard Overview · AI Chat · Phishing Detection · Threat Intel Feed
 
-Dashboard
+
 <img src="doc/dashboard.png" width="700">
 
 ---
