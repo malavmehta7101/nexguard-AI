@@ -1,18 +1,35 @@
-# Dependencies
+# ── Dependencies ──────────────────────────────────────────────────
 node_modules/
 */node_modules/
 
-# Environment variables — NEVER commit this
+# ── Environment Variables — NEVER COMMIT ──────────────────────────
 backend/.env
+.env
+.env.local
+.env.production
 
-# Build output
+# ── Build Output ───────────────────────────────────────────────────
 frontend/dist/
 frontend/.vite/
+build/
 
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs
+# ── Logs ───────────────────────────────────────────────────────────
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── OS Files ───────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+Thumbs.db
+Desktop.ini
+
+# ── Editor ────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# ── Uploads (temp files) ──────────────────────────────────────────
+backend/uploads/
