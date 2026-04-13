@@ -28,10 +28,10 @@
 ## 📸 Screenshots
 
 > Dashboard Overview · AI Chat · Phishing Detection · Threat Intel Feed
-```
+
 Dashboard
 <img src="docs/dashboard.png" width="700">
-```
+
 ---
 
 ## ✨ Features
