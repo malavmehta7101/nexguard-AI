@@ -295,7 +295,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ## 🙏 Acknowledgements
 
-- [Anthropic](https://anthropic.com) — Claude AI powering all security analysis
+- [Anthropic](https://anthropic.com) — AI powering all security analysis
 - [NVD / NIST](https://nvd.nist.gov) — Real-time CVE vulnerability database
 - [Lucide Icons](https://lucide.dev) — Icon library
 - [MITRE ATT&CK](https://attack.mitre.org) — Threat framework reference
