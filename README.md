@@ -119,7 +119,7 @@ nexguard-ai/
 │
 ├── backend/                        # Node.js + Express API
 │   ├── routes/
-│   │   ├── ai.js                   # All Claude AI endpoints
+│   │   ├── ai.js                   # All AI endpoints
 │   │   └── tools.js                # Security tools + NVD live feed
 │   ├── server.js                   # Express server, CORS, rate limiting
 │   ├── .env.example                # Environment template
@@ -304,7 +304,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 <div align="center">
 
-**Built with ❤️ and Claude AI**
+**Built with ❤️ and AI**
 
 ⭐ Star this repo if you find it useful!
 
