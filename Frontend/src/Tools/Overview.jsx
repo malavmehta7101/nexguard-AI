@@ -2,18 +2,27 @@ import { useState, useEffect } from "react";
 import { Shield, AlertTriangle, Database, Activity, Zap, ChevronRight } from "lucide-react";
 
 const QUICK_TOOLS = [
-  { id: "phishing", emoji: "🛡", label: "Phishing Detection",  color: "var(--primary)" },
-  { id: "chat",     emoji: "🤖", label: "AI Chat",            color: "var(--cyan)" },
-  { id: "email",    emoji: "📧", label: "Email Analyzer",     color: "var(--primary)" },
-  { id: "cve",      emoji: "🔍", label: "CVE Lookup",         color: "var(--cyan)" },
-  { id: "password", emoji: "🔑", label: "Password Tools",     color: "var(--warning)" },
-  { id: "webrtc",   emoji: "📡", label: "WebRTC Leak Test",   color: "var(--danger)" },
-  { id: "malware",  emoji: "💻", label: "Malware Detection",  color: "var(--danger)" },
-  { id: "threats",  emoji: "⚡", label: "Threat Intel Feed",  color: "var(--warning)" },
+  // Phase 1
+  { id: "phishing",   emoji: "🛡",  label: "Phishing Detection",  color: "var(--primary)", phase: 1 },
+  { id: "chat",       emoji: "🤖",  label: "AI Chat",             color: "var(--cyan)",    phase: 1 },
+  { id: "email",      emoji: "📧",  label: "Email Analyzer",      color: "var(--primary)", phase: 1 },
+  { id: "cve",        emoji: "🔍",  label: "CVE Lookup",          color: "var(--cyan)",    phase: 1 },
+  { id: "password",   emoji: "🔑",  label: "Password Tools",      color: "var(--warning)", phase: 1 },
+  { id: "webrtc",     emoji: "📡",  label: "WebRTC Leak Test",    color: "var(--danger)",  phase: 1 },
+  { id: "malware",    emoji: "💻",  label: "Malware Detection",   color: "var(--danger)",  phase: 1 },
+  { id: "threats",    emoji: "⚡",  label: "Threat Intel Feed",   color: "var(--warning)", phase: 1 },
+  // Phase 2
+  { id: "virustotal", emoji: "🦠",  label: "VirusTotal Scanner",  color: "var(--cyan)",    phase: 2 },
+  { id: "dns",        emoji: "🌐",  label: "DNS & WHOIS",         color: "var(--cyan)",    phase: 2 },
+  { id: "ssl",        emoji: "🔒",  label: "SSL/TLS Analyzer",    color: "var(--primary)", phase: 2 },
+  { id: "subdomains", emoji: "🕵️",  label: "Subdomain Enum",      color: "var(--warning)", phase: 2 },
+  { id: "breach",     emoji: "🌑",  label: "Breach Monitor",      color: "var(--danger)",  phase: 2 },
+  { id: "workspace",  emoji: "🗂",  label: "Workspace & History", color: "var(--text2)",   phase: 2 },
 ];
 
 export default function Overview({ onNavigate }) {
-  const [stats, setStats] = useState({ threatsBlocked: 284512, scansToday: 12400, cveDatabase: 247891 });
+  const [stats, setStats]   = useState({ threatsBlocked: 284512, scansToday: 12400, cveDatabase: 247891 });
+  const [phaseTab, setPhaseTab] = useState(1);
 
   useEffect(() => {
     fetch("/api/stats").then(r => r.json()).then(setStats).catch(() => {});
@@ -24,34 +33,33 @@ export default function Overview({ onNavigate }) {
   }, []);
 
   const metrics = [
-    { l: "Threats Blocked",  v: stats.threatsBlocked.toLocaleString(), color: "var(--danger)",   icon: <Shield size={15} />,   sub: "↑ +1,247 from yesterday" },
-    { l: "CVE Database",     v: stats.cveDatabase.toLocaleString(),    color: "var(--cyan)",     icon: <Database size={15} />, sub: "247K vulnerabilities indexed" },
-    { l: "Scans Today",      v: stats.scansToday.toLocaleString(),     color: "var(--primary)",  icon: <Activity size={15} />, sub: "Real-time AI analysis" },
-    { l: "Platform Uptime",  v: "99.97%",                              color: "var(--warning)",  icon: <Zap size={15} />,      sub: "Last 30 days" },
+    { l: "Threats Blocked", v: stats.threatsBlocked.toLocaleString(), color: "var(--danger)",  icon: <Shield size={15}/>,   sub: "↑ +1,247 from yesterday" },
+    { l: "CVE Database",    v: stats.cveDatabase.toLocaleString(),    color: "var(--cyan)",    icon: <Database size={15}/>, sub: "247K vulnerabilities indexed" },
+    { l: "Scans Today",     v: stats.scansToday.toLocaleString(),     color: "var(--primary)", icon: <Activity size={15}/>, sub: "Real-time AI analysis" },
+    { l: "Platform Uptime", v: "99.97%",                              color: "var(--warning)", icon: <Zap size={15}/>,      sub: "Last 30 days" },
   ];
 
   const recentAlerts = [
-    { s: "critical", m: "CVE-2024-3094 exploitation attempt detected",     t: "2m ago" },
-    { s: "high",     m: "Phishing domain registered: paypa1-secure.com",   t: "8m ago" },
-    { s: "high",     m: "Suspicious SSH brute force: 185.220.101.45",      t: "15m ago" },
-    { s: "medium",   m: "Deepfake audio detected in customer support call", t: "31m ago" },
-    { s: "medium",   m: "WebRTC IP leak detected on corporate browser",     t: "1h ago" },
-    { s: "low",      m: "Outdated TLS 1.0 detected on legacy endpoint",    t: "2h ago" },
+    { s: "critical", m: "CVE-2024-3094 exploitation attempt detected",      t: "2m ago" },
+    { s: "high",     m: "Phishing domain registered: paypa1-secure.com",    t: "8m ago" },
+    { s: "high",     m: "Suspicious SSH brute force: 185.220.101.45",       t: "15m ago" },
+    { s: "medium",   m: "Deepfake audio detected in customer support call",  t: "31m ago" },
+    { s: "medium",   m: "WebRTC IP leak detected on corporate browser",      t: "1h ago" },
+    { s: "low",      m: "Outdated TLS 1.0 detected on legacy endpoint",     t: "2h ago" },
   ];
 
   const attackVectors = [
-    ["Phishing / Social Engineering",        74, "var(--danger)"],
-    ["Malware / Ransomware",                 68, "var(--warning)"],
-    ["Brute Force / Credential Stuffing",    61, "var(--primary)"],
-    ["SQL Injection / XSS",                  45, "var(--primary)"],
-    ["Supply Chain Attacks",                 38, "var(--cyan)"],
-    ["Deepfake / Synthetic Media",           29, "var(--cyan)"],
+    ["Phishing / Social Engineering",     74, "var(--danger)"],
+    ["Malware / Ransomware",              68, "var(--warning)"],
+    ["Brute Force / Credential Stuffing", 61, "var(--primary)"],
+    ["SQL Injection / XSS",               45, "var(--primary)"],
+    ["Supply Chain Attacks",              38, "var(--cyan)"],
+    ["Deepfake / Synthetic Media",        29, "var(--cyan)"],
   ];
 
-  const sc = {
-    critical: "var(--danger)", high: "#ff6600",
-    medium: "var(--warning)", low: "var(--cyan)", info: "var(--text2)",
-  };
+  const sc = { critical: "var(--danger)", high: "#ff6600", medium: "var(--warning)", low: "var(--cyan)" };
+
+  const visibleTools = QUICK_TOOLS.filter(t => t.phase === phaseTab);
 
   return (
     <div className="fade-up">
@@ -65,7 +73,7 @@ export default function Overview({ onNavigate }) {
       </div>
 
       {/* Metrics */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14, marginBottom: 22 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px,1fr))", gap: 14, marginBottom: 22 }}>
         {metrics.map((m, i) => (
           <div key={i} className="card" style={{ padding: "18px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
@@ -114,36 +122,44 @@ export default function Overview({ onNavigate }) {
         </div>
       </div>
 
-      {/* Quick Access — NOW CLICKABLE */}
+      {/* Quick Access — Phase tabs */}
       <div className="card" style={{ padding: "18px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-          <div className="section-label" style={{ marginBottom: 0 }}>QUICK ACCESS — POPULAR TOOLS</div>
-          <span style={{ fontSize: 10, color: "var(--text2)" }}>Click any tool to launch</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+          <div>
+            <div className="section-label" style={{ marginBottom: 0 }}>QUICK ACCESS — ALL TOOLS</div>
+            <div style={{ fontSize: 10, color: "var(--text2)", marginTop: 3 }}>Click any tool to launch instantly</div>
+          </div>
+          {/* Phase toggle */}
+          <div style={{ display: "flex", gap: 6 }}>
+            <button
+              onClick={() => setPhaseTab(1)}
+              style={{ padding: "5px 14px", fontSize: 10.5, cursor: "pointer", fontFamily: "'JetBrains Mono',monospace", fontWeight: 600, border: "1px solid", transition: "all .18s",
+                background: phaseTab === 1 ? "var(--primary-dim)" : "transparent",
+                borderColor: phaseTab === 1 ? "var(--primary)" : "var(--border)",
+                color: phaseTab === 1 ? "var(--primary)" : "var(--text2)" }}>
+              Phase 1
+            </button>
+            <button
+              onClick={() => setPhaseTab(2)}
+              style={{ padding: "5px 14px", fontSize: 10.5, cursor: "pointer", fontFamily: "'JetBrains Mono',monospace", fontWeight: 600, border: "1px solid", transition: "all .18s",
+                background: phaseTab === 2 ? "var(--cyan-dim)" : "transparent",
+                borderColor: phaseTab === 2 ? "var(--cyan)" : "var(--border)",
+                color: phaseTab === 2 ? "var(--cyan)" : "var(--text2)" }}>
+              Phase 2 ✦ NEW
+            </button>
+          </div>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 9 }}>
-          {QUICK_TOOLS.map((tool) => (
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(185px,1fr))", gap: 9 }}>
+          {visibleTools.map(tool => (
             <button
               key={tool.id}
               onClick={() => onNavigate && onNavigate(tool.id)}
-              style={{
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                gap: 8, background: "var(--surface)", border: "1px solid var(--border)",
-                padding: "10px 13px", cursor: "pointer", fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 11.5, color: "var(--text)", transition: "all .18s", textAlign: "left", width: "100%",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = tool.color;
-                e.currentTarget.style.color = tool.color;
-                e.currentTarget.style.background = "var(--card2)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.color = "var(--text)";
-                e.currentTarget.style.background = "var(--surface)";
-              }}
-            >
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, background: "var(--surface)", border: "1px solid var(--border)", padding: "10px 13px", cursor: "pointer", fontFamily: "'JetBrains Mono',monospace", fontSize: 11.5, color: "var(--text)", transition: "all .18s", textAlign: "left", width: "100%" }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = tool.color; e.currentTarget.style.color = tool.color; e.currentTarget.style.background = "var(--card2)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.background = "var(--surface)"; }}>
               <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 14 }}>{tool.emoji}</span>
+                <span style={{ fontSize: 15 }}>{tool.emoji}</span>
                 {tool.label}
               </span>
               <ChevronRight size={12} style={{ flexShrink: 0, opacity: 0.5 }} />

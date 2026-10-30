@@ -1,33 +1,37 @@
 import { useState, useEffect } from "react";
-import Landing          from "./pages/Landing.jsx";
-import Dashboard        from "./pages/Dashboard.jsx";
-import LegalDisclaimer  from "./components/LegalDisclaimer.jsx";
+import { AuthProvider } from "./context/AuthContext";
+import Landing    from "./pages/Landing";
+import Dashboard  from "./pages/Dashboard";
+import LegalDisclaimer from "./components/LegalDisclaimer";
 
 export default function App() {
-  const [page,            setPage]            = useState("landing");
-  const [disclaimerDone,  setDisclaimerDone]  = useState(false);
+  const [view,       setView]       = useState("landing");
+  const [disclaimer, setDisclaimer] = useState(false);
 
-  // Check if user already accepted in this session
   useEffect(() => {
-    const accepted = sessionStorage.getItem("nexguard_disclaimer_accepted");
-    if (accepted === "true") setDisclaimerDone(true);
+    const accepted = localStorage.getItem("ng_disclaimer_v2");
+    if (!accepted) setDisclaimer(true);
   }, []);
 
-  // Show disclaimer first — blocks everything until accepted
-  if (!disclaimerDone) {
-    return (
-      <>
-        <div className="scanlines" />
-        <LegalDisclaimer onAccept={() => setDisclaimerDone(true)} />
-      </>
-    );
-  }
+  const acceptDisclaimer = () => {
+    localStorage.setItem("ng_disclaimer_v2", "true");
+    setDisclaimer(false);
+  };
+
+  useEffect(() => {
+    const handler = () => setView("landing");
+    window.addEventListener("auth:logout", handler);
+    return () => window.removeEventListener("auth:logout", handler);
+  }, []);
 
   return (
-    <>
-      <div className="scanlines" />
-      {page === "landing"   && <Landing   onEnter={() => setPage("dashboard")} />}
-      {page === "dashboard" && <Dashboard onHome={() => setPage("landing")} />}
-    </>
+    <AuthProvider>
+      {disclaimer && <LegalDisclaimer onAccept={acceptDisclaimer} />}
+      {!disclaimer && (
+        view === "landing"
+          ? <Landing    onEnter={() => setView("dashboard")} />
+          : <Dashboard  onHome={() => setView("landing")} />
+      )}
+    </AuthProvider>
   );
 }

@@ -5,7 +5,7 @@ const router = express.Router();
 const HAS_API_KEY = !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== "sk-ant-your-key-here";
 
 let client = null;
-const MODEL = "claude-sonnet-4-20250514";
+const MODEL = "claude-sonnet-4-5-20250929";
 
 if (HAS_API_KEY) {
   const Anthropic = require("@anthropic-ai/sdk");

@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Shield, Terminal, Zap, Globe, Eye, AlertTriangle, Lock, ChevronRight, Activity, Cpu, Database, Mail, Mic, Key, Network, Bug, Search } from "lucide-react";
-import MatrixRain from "../Components/MatrixRain.jsx";
-import ThreatTicker from "../Components/ThreatTicker.jsx";
+import MatrixRain from "../components/MatrixRain.jsx";
+import ThreatTicker from "../components/ThreatTicker.jsx";
+import AuthModal from "../components/AuthModal.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
-// ── Live Counter ───────────────────────────────────────────────────────────────
+// ── Live Counter ────────────────────────────────────────────────────────────
 function LiveCounter({ target, prefix = "", suffix = "", label, color }) {
   const [val, setVal] = useState(0);
   const ref = useRef(null);
@@ -34,7 +36,7 @@ function LiveCounter({ target, prefix = "", suffix = "", label, color }) {
   );
 }
 
-// ── Animated Terminal Demo ─────────────────────────────────────────────────────
+// ── Animated Terminal Demo ────────────────────────────────────────────────────
 const DEMO_LINES = [
   { d: 400,  c: "var(--primary)", t: "nexguard > scan --target example.com --deep" },
   { d: 900,  c: "var(--text)",    t: "[+] Initiating threat intelligence scan..." },
@@ -55,9 +57,7 @@ function TerminalDemo() {
     let mounted = true;
     setLines([]);
     DEMO_LINES.forEach(({ d, c, t }) => {
-      setTimeout(() => {
-        if (mounted) setLines(prev => [...prev, { c, t }]);
-      }, d);
+      setTimeout(() => { if (mounted) setLines(prev => [...prev, { c, t }]); }, d);
     });
     const loop = setInterval(() => {
       if (mounted) {
@@ -97,8 +97,12 @@ function FeatureCard({ icon, title, desc, tag, delay = 0 }) {
   );
 }
 
-// ── Main Landing ───────────────────────────────────────────────────────────────
+// ── Main Landing ──────────────────────────────────────────────────────────────
 export default function Landing({ onEnter }) {
+  const { user, logout } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
+  const [authTab, setAuthTab]   = useState("login");
+
   const [stats, setStats] = useState({ threatsBlocked: 284512, scansToday: 12400, cveDatabase: 247891 });
 
   useEffect(() => {
@@ -107,13 +111,16 @@ export default function Landing({ onEnter }) {
     return () => clearInterval(id);
   }, []);
 
+  const openLogin    = () => { setAuthTab("login");    setShowAuth(true); };
+  const openRegister = () => { setAuthTab("register"); setShowAuth(true); };
+
   const features = [
     { icon: <Shield size={18} />, title: "AI Phishing Detection",      desc: "Real-time URL and content analysis with ML-powered domain spoofing, typosquatting, and social engineering detection.", tag: "g" },
     { icon: <Eye size={18} />,    title: "Deepfake Audio & Video",      desc: "Detect synthetic media with AI analysis of GAN artifacts, audio-visual sync, and generative model fingerprints.", tag: "d" },
     { icon: <Mail size={18} />,   title: "Smart Email Analyzer",        desc: "Full email forensics: header analysis, SPF/DKIM/DMARC checks, BEC patterns, and embedded threat detection.", tag: "g" },
     { icon: <Network size={18} />,title: "WebRTC Privacy Leak Test",    desc: "Detect real IP exposure via WebRTC ICE candidates — even behind VPN. Identifies IPv4/IPv6 leaks in real time.", tag: "w" },
     { icon: <Key size={18} />,    title: "Advanced Password Tools",     desc: "Entropy-based strength scoring, breach detection patterns, password generation, and cryptographic hash analysis.", tag: "g" },
-    { icon: <Terminal size={18} />,title: "24/7 AI Security Assistant", desc: "NEXGUARD-powered expert assistant for CVE analysis, malware research, forensics, and cybersecurity Q&A.", tag: "g" },
+    { icon: <Terminal size={18} />,title: "24/7 AI Security Assistant", desc: "Claude-powered expert assistant for CVE analysis, malware research, forensics, and cybersecurity Q&A.", tag: "g" },
     { icon: <Bug size={18} />,    title: "AI-Powered Pen Testing",      desc: "Guided penetration testing methodology with OWASP/PTES alignment, tool recommendations, and exploitation guidance.", tag: "w" },
     { icon: <Cpu size={18} />,    title: "AI Malware Detection",        desc: "Behavioral and static analysis with MITRE ATT&CK mapping, IOC extraction, and threat actor profiling.", tag: "d" },
     { icon: <Database size={18} />,title: "CVE Intelligence",           desc: "Deep CVE analysis with CVSS scoring, exploitation status, affected systems, and step-by-step remediation.", tag: "g" },
@@ -122,7 +129,8 @@ export default function Landing({ onEnter }) {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", overflowX: "hidden" }}>
-      {/* ── Topbar ───────────────────────────────────────────── */}
+
+      {/* ── Topbar ──────────────────────────────────────────────────────────── */}
       <div style={{ background: "var(--surface)", borderBottom: "1px solid rgba(0,232,122,.12)", padding: "7px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <ThreatTicker />
         <div style={{ fontSize: 10, color: "var(--text2)", whiteSpace: "nowrap", flexShrink: 0 }}>
@@ -130,7 +138,7 @@ export default function Landing({ onEnter }) {
         </div>
       </div>
 
-      {/* ── Navbar ───────────────────────────────────────────── */}
+      {/* ── Navbar ──────────────────────────────────────────────────────────── */}
       <nav style={{ position: "sticky", top: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 40px", background: "rgba(1,5,10,.95)", backdropFilter: "blur(14px)", borderBottom: "1px solid var(--border)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <Shield size={20} color="var(--primary)" />
@@ -139,18 +147,41 @@ export default function Landing({ onEnter }) {
             <span style={{ fontSize: 10, color: "var(--text2)", marginLeft: 7, fontFamily: "'JetBrains Mono', monospace", fontWeight: 400 }}>AI</span>
           </span>
         </div>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <a href="#features" style={{ fontSize: 11.5, color: "var(--text2)", textDecoration: "none", padding: "0 10px" }}
+
+        <div style={{ display: "flex", gap: 18, alignItems: "center" }}>
+          <a href="#features" style={{ fontSize: 11.5, color: "var(--text2)", textDecoration: "none" }}
             onMouseEnter={e => e.target.style.color = "var(--primary)"} onMouseLeave={e => e.target.style.color = "var(--text2)"}>Features</a>
-          <a href="#stats" style={{ fontSize: 11.5, color: "var(--text2)", textDecoration: "none", padding: "0 10px" }}
+          <a href="#stats" style={{ fontSize: 11.5, color: "var(--text2)", textDecoration: "none" }}
             onMouseEnter={e => e.target.style.color = "var(--primary)"} onMouseLeave={e => e.target.style.color = "var(--text2)"}>Stats</a>
+
+          {/* ── Auth Controls ──────────────────────────────────────────────── */}
+          {user ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 11.5, color: "var(--text2)" }}>
+                Hi, <span style={{ color: "var(--primary)", fontWeight: 600 }}>{user.username}</span>
+              </span>
+              <button className="btn" onClick={logout} style={{ fontSize: 11, padding: "8px 16px" }}>
+                Log Out
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "flex", gap: 8 }}>
+              <button className="btn" onClick={openLogin} style={{ fontSize: 11, padding: "8px 16px" }}>
+                Sign In
+              </button>
+              <button className="btn cyan" onClick={openRegister} style={{ fontSize: 11, padding: "8px 16px" }}>
+                Sign Up Free
+              </button>
+            </div>
+          )}
+
           <button className="btn solid" onClick={onEnter} style={{ fontSize: 12, padding: "9px 22px" }}>
             Launch Platform <ChevronRight size={13} />
           </button>
         </div>
       </nav>
 
-      {/* ── Hero ─────────────────────────────────────────────── */}
+      {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <section className="grid-bg" style={{ position: "relative", minHeight: "92vh", display: "flex", alignItems: "center", padding: "80px 40px 60px" }}>
         <MatrixRain opacity={0.14} />
         <div style={{ position: "relative", zIndex: 1, maxWidth: 1160, margin: "0 auto", width: "100%", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
@@ -162,18 +193,20 @@ export default function Landing({ onEnter }) {
               Platform
             </h1>
             <p className="fade-up" style={{ fontSize: 13.5, color: "var(--text)", lineHeight: 1.85, maxWidth: 480, marginBottom: 34, animationDelay: ".14s" }}>
-              NexGuard AI combines cutting-edge machine learning with deep security expertise. Detect phishing, analyze deepfakes, identify malware, and harden your systems — all powered by AI. No account needed.
+              NexGuard AI combines cutting-edge machine learning with deep security expertise. Detect phishing, analyze deepfakes, identify malware, and harden your systems — all powered by Claude AI. No account needed to try it, sign up free to save your history.
             </p>
             <div className="fade-up" style={{ display: "flex", gap: 12, flexWrap: "wrap", animationDelay: ".21s" }}>
               <button className="btn solid lg" onClick={onEnter}>
                 <Zap size={15} /> Launch Free Platform
               </button>
-              <button className="btn cyan" style={{ padding: "13px 24px", fontSize: 12 }} onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}>
-                Explore Features →
-              </button>
+              {!user && (
+                <button className="btn cyan" style={{ padding: "13px 24px", fontSize: 12 }} onClick={openRegister}>
+                  Create Free Account →
+                </button>
+              )}
             </div>
             <div className="fade-up" style={{ marginTop: 24, display: "flex", gap: 20, flexWrap: "wrap", animationDelay: ".28s" }}>
-              {["No account required","100% AI-powered","10+ security tools","Real-time analysis"].map((t, i) => (
+              {["No account required to try","100% AI-powered","18+ security tools","Real-time analysis"].map((t, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "var(--text2)" }}>
                   <div style={{ width: 5, height: 5, background: "var(--primary)", borderRadius: "50%", boxShadow: "0 0 5px var(--primary)" }} />
                   {t}
@@ -203,7 +236,7 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
-      {/* ── Stats ─────────────────────────────────────────────── */}
+      {/* ── Stats ───────────────────────────────────────────────────────────── */}
       <section id="stats" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", background: "var(--surface)" }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 1, background: "var(--border)" }}>
           {[
@@ -219,7 +252,7 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
-      {/* ── How It Works ──────────────────────────────────────── */}
+      {/* ── How It Works ────────────────────────────────────────────────────── */}
       <section style={{ padding: "80px 40px", maxWidth: 1160, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 50 }}>
           <div className="tag c" style={{ marginBottom: 14 }}>◈ HOW IT WORKS</div>
@@ -229,7 +262,7 @@ export default function Landing({ onEnter }) {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
           {[
-            { n: "01", icon: <Search size={22} />, t: "Submit Your Target",    d: "Enter a URL, IP, email, file hash, or paste suspicious content into any of our AI-powered tools. No setup or account needed." },
+            { n: "01", icon: <Search size={22} />, t: "Submit Your Target",    d: "Enter a URL, IP, email, file hash, or paste suspicious content into any of our AI-powered tools. No setup or account needed to try." },
             { n: "02", icon: <Cpu size={22} />,    t: "AI Analysis Engine",    d: "Our Claude-powered AI cross-references threat intelligence databases, CVE feeds, and behavioral patterns in real time." },
             { n: "03", icon: <Shield size={22} />, t: "Actionable Intelligence",d: "Receive detailed findings with risk scores, MITRE ATT&CK mappings, IOCs, and step-by-step remediation guidance." },
           ].map((s, i) => (
@@ -243,15 +276,15 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
-      {/* ── Features Grid ─────────────────────────────────────── */}
+      {/* ── Features Grid ───────────────────────────────────────────────────── */}
       <section id="features" style={{ padding: "20px 40px 80px", maxWidth: 1160, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <div className="tag g" style={{ marginBottom: 14 }}>◈ SECURITY ARSENAL</div>
           <h2 style={{ fontFamily: "Syne, sans-serif", fontSize: "clamp(26px,3.5vw,38px)", fontWeight: 800, color: "var(--white)" }}>
-            10+ AI-Powered <span style={{ color: "var(--primary)" }}>Security Tools</span>
+            18+ AI-Powered <span style={{ color: "var(--primary)" }}>Security Tools</span>
           </h2>
           <p style={{ fontSize: 12.5, color: "var(--text)", marginTop: 12, maxWidth: 520, margin: "12px auto 0" }}>
-            Every tool powered by AI. No subscriptions, no accounts, no limits on the free tier.
+            Every tool powered by Claude AI. Try instantly with no account, or sign up free for unlimited monthly scans and saved history.
           </p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
@@ -259,31 +292,38 @@ export default function Landing({ onEnter }) {
         </div>
       </section>
 
-      {/* ── CTA ───────────────────────────────────────────────── */}
+      {/* ── CTA ─────────────────────────────────────────────────────────────── */}
       <section style={{ padding: "72px 40px", borderTop: "1px solid var(--border)", textAlign: "center", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(0,232,122,.04) 0%, transparent 70%)", pointerEvents: "none" }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div className="tag g" style={{ marginBottom: 16 }}>◈ FREE · NO ACCOUNT REQUIRED</div>
+          <div className="tag g" style={{ marginBottom: 16 }}>◈ FREE · NO CREDIT CARD REQUIRED</div>
           <h2 style={{ fontFamily: "Syne, sans-serif", fontSize: "clamp(26px,3.5vw,40px)", fontWeight: 800, color: "var(--white)", marginBottom: 14 }}>
             Start Securing Your Digital Life
           </h2>
           <p style={{ fontSize: 13, color: "var(--text)", marginBottom: 32, maxWidth: 480, margin: "0 auto 32px" }}>
-            All tools are free and accessible instantly.
+            All tools are free and accessible instantly. Powered by Claude AI. Create a free account to unlock 50 scans/month and save your history.
           </p>
-          <button className="btn solid lg" onClick={onEnter}>
-            <Zap size={16} /> Open Platform — It's Free
-          </button>
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+            <button className="btn solid lg" onClick={onEnter}>
+              <Zap size={16} /> Open Platform — It's Free
+            </button>
+            {!user && (
+              <button className="btn cyan" style={{ padding: "13px 28px", fontSize: 13 }} onClick={openRegister}>
+                Create Free Account →
+              </button>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* ── Footer ────────────────────────────────────────────── */}
+      {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <footer style={{ padding: "22px 40px", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Shield size={14} color="var(--primary)" />
           <span style={{ fontFamily: "Syne, sans-serif", fontSize: 13, fontWeight: 800, color: "var(--white)" }}>NEXGUARD AI</span>
         </div>
         <div style={{ fontSize: 10.5, color: "var(--text2)" }}>
-          Powered by Malav Mehta · For authorized security research only · © 2025 NexGuard
+          Powered by Claude AI · For authorized security research only · © 2025 NexGuard
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           {["SAFE USE POLICY","GITHUB","DOCS"].map((l, i) => (
@@ -291,6 +331,11 @@ export default function Landing({ onEnter }) {
           ))}
         </div>
       </footer>
+
+      {/* ── Auth Modal ──────────────────────────────────────────────────────── */}
+      {showAuth && (
+        <AuthModal defaultTab={authTab} onClose={() => setShowAuth(false)} />
+      )}
     </div>
   );
 }

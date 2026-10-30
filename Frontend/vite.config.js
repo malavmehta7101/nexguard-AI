@@ -13,4 +13,19 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    outDir: "dist",
+    sourcemap: false,
+    minify: "esbuild",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react:  ["react", "react-dom"],
+          icons:  ["lucide-react"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
+  preview: { port: 4173 },
 });

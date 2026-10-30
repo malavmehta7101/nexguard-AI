@@ -1,0 +1,6 @@
+# NexGuard AI — robots.txt
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://nexguard.ai/sitemap.xml
